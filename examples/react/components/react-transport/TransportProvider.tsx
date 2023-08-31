@@ -1,6 +1,6 @@
-import React, {useState} from "react";
-import {context} from "./transportContext"
-import {flushSync} from "react-dom";
+import React, { useState } from "react"
+import { context } from "./transportContext"
+import { flushSync } from "react-dom"
 
 type Props = {
     children: React.ReactNode
@@ -8,21 +8,20 @@ type Props = {
 
 // group name => container
 // container => parentNode
-export function TransportProvider({children}: Props) {
+export function TransportProvider({ children }: Props) {
     const [groups, setGroups] = useState<Map<string, HTMLElement>>(new Map())
     const [actives, setActives] = useState(new Set<string>())
     const register = (id: string, container: HTMLElement) => {
-        setGroups(groups => {
+        setGroups((groups) => {
             if (groups.has(id)) return groups
             else {
                 groups.set(id, container)
             }
             return new Map(groups)
         })
-
     }
     const unregister = (id: string) => {
-        setGroups(groups => {
+        setGroups((groups) => {
             if (!groups.has(id)) return groups
             else {
                 groups.delete(id)
@@ -48,13 +47,12 @@ export function TransportProvider({children}: Props) {
                     swapNode(to, toNode.dataset.swappedWith!)
                     swapNode(from, to)
                 })
-                return;
+                return
             } else {
                 fromNode.dataset.swappedWith = to
                 toNode.dataset.swappedWith = from
             }
         }
-
 
         /**
          * replaceChild(newNode, oldNode) -> oldNode, newNode不能是已经渲染的Node，需要先remove
@@ -66,14 +64,11 @@ export function TransportProvider({children}: Props) {
 
         tempSwapNode.parentNode!.replaceChild(availableToNode, tempSwapNode)
 
-        setActives(actives => {
+        setActives((actives) => {
             actives.delete(from)
             actives.add(to)
             return new Set(actives)
         })
     }
-    return <context.Provider value={{actives, groups, register, unregister, swapNode}}>
-        {children}
-    </context.Provider>
+    return <context.Provider value={{ actives, groups, register, unregister, swapNode }}>{children}</context.Provider>
 }
-
